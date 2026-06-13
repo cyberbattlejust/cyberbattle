@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Music2, Volume2, VolumeX } from 'lucide-react';
 
 interface MusicPlayerProps {
@@ -23,6 +25,21 @@ export default function MusicPlayer({
   onToggleMute,
   onVolumeChange,
 }: MusicPlayerProps) {
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const findSlot = () => {
+      setSlot(document.querySelector<HTMLElement>('[data-music-player-slot]'));
+    };
+
+    findSlot();
+
+    const observer = new MutationObserver(findSlot);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
   if (!active) return null;
 
   const toggleMusic = () => {
@@ -34,8 +51,14 @@ export default function MusicPlayer({
     onToggleMute();
   };
 
-  return (
-    <div className="fixed bottom-4 right-4 z-[70] flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-slate-950/90 p-2 shadow-xl shadow-black/40 backdrop-blur">
+  const player = (
+    <div
+      className={
+        slot
+          ? 'flex shrink-0 items-center gap-2 rounded-lg border border-cyan-400/20 bg-slate-950/70 p-1'
+          : 'fixed right-3 top-3 z-[70] flex items-center gap-2 rounded-lg border border-cyan-400/20 bg-slate-950/90 p-2 shadow-xl shadow-black/40 backdrop-blur'
+      }
+    >
       <div
         className="flex h-8 w-8 items-center justify-center text-cyan-300"
         title={phase === 'battle' ? 'Battle theme' : 'Lobby and victory theme'}
@@ -74,4 +97,6 @@ export default function MusicPlayer({
       </button>
     </div>
   );
+
+  return slot ? createPortal(player, slot) : player;
 }
