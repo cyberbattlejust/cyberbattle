@@ -149,13 +149,16 @@ export default function RoomScreen({
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={onBack}
-                className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-cyan-400/30 hover:text-white"
-              >
-                Back
-              </button>
+              <div className="flex shrink-0 items-center gap-2">
+                <div data-music-player-slot />
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-cyan-400/30 hover:text-white"
+                >
+                  Back
+                </button>
+              </div>
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
