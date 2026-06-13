@@ -18,9 +18,10 @@ const BATTLE_VIEWS = new Set([
   'logs',
   'missions',
 ]);
+const SILENT_VIEWS = new Set(['intro', 'register', 'login']);
 const TRANSITION_DURATION_MS = 900;
 const TRANSITION_STEP_MS = 40;
-const DEFAULT_VOLUME = 0.25;
+const DEFAULT_VOLUME = 0.02;
 const MAX_VOLUME = 0.6;
 
 function clampVolume(value: number) {
@@ -72,17 +73,15 @@ export function useGameMusic({
   const activePhaseRef = useRef<MusicPhase>('lobby');
   const transitionRef = useRef<number | null>(null);
 
-  const shouldPlayMusic =
-    authenticated &&
-    Boolean(roomCode) &&
-    (view === 'lobby' || view === 'supervisor' || BATTLE_VIEWS.has(view));
+  const shouldPlayMusic = authenticated && !SILENT_VIEWS.has(view);
 
   const desiredPhase = useMemo<MusicPhase | null>(() => {
     if (!shouldPlayMusic) return null;
 
+    if (!roomCode) return 'lobby';
     if (winnerReached || roomStatus === 'finished') return 'lobby';
     if (roomStatus === 'paused') return 'lobby';
-    if (view === 'lobby') return 'lobby';
+    if (!BATTLE_VIEWS.has(view) && view !== 'supervisor') return 'lobby';
     if (roomStatus === 'playing' || BATTLE_VIEWS.has(view)) return 'battle';
 
     return 'lobby';
