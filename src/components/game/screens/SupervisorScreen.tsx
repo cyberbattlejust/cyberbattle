@@ -667,6 +667,7 @@ export default function SupervisorScreen({
             >
               Settings
             </button>
+            <div data-music-player-slot />
             <button
               type="button"
               onClick={onLogout}
